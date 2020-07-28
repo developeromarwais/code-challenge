@@ -10,7 +10,7 @@ import {
   ApolloProvider,
 } from "@apollo/client";
 
-const client = new ApolloClient({
+const client = new ApolloClient({ 
   cache: new InMemoryCache(),
   link: new HttpLink({
     uri: "https://api.blocktap.io/graphql",
