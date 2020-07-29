@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import {
     Box,
     CircularProgress,
+    Container,
     Grid,
 } from "@material-ui/core";
 import { IMarket } from '../../Models/Market';
@@ -21,27 +22,29 @@ export default ({ symbol }: { symbol: string }): React.ReactElement => {
         .filter((elem, pos, arr) => arr.indexOf(elem) === pos);
 
     return (
-        <>
-            {
-                exchanges?.map(exchange => (
-                    <>
-                        <h3>{exchange}</h3>
-                        <Grid container lg={12}>
-                            {
-                                data?.markets
-                                    .filter((m: IMarket) => m.exchangeSymbol === exchange)
-                                    .map((market: IMarket) =>
-                                        <Grid item lg={6}>
-                                            <CurrencyMarketCard
-                                                key={market.exchangeSymbol + Math.random()}
-                                                market={market}
-                                            />
-                                        </Grid>)
-                            }
-                        </Grid>
-                    </>
-                ))
-            }
-        </>
+        <Container maxWidth="lg">
+            <>
+                {
+                    exchanges?.map(exchange => (
+                        <>
+                            <h3>{exchange}</h3>
+                            <Grid container lg={12}>
+                                {
+                                    data?.markets
+                                        .filter((m: IMarket) => m.exchangeSymbol === exchange)
+                                        .map((market: IMarket) =>
+                                            <Grid item lg={6}>
+                                                <CurrencyMarketCard
+                                                    key={market.exchangeSymbol + Math.random()}
+                                                    market={market}
+                                                />
+                                            </Grid>)
+                                }
+                            </Grid>
+                        </>
+                    ))
+                }
+            </>
+        </Container>
     );
 };

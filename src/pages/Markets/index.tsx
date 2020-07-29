@@ -16,7 +16,7 @@ export default ({ match }: RouteComponentProps<{ name: string }>): React.ReactEl
             </Helmet>
 
             <Box margin="0 auto" p={6} overflow="hidden">
-                <small><Link to="/">{'<'} back to All Markets</Link></small>
+                <Link to="/">{'<'} back to All Markets</Link>
                 <h3>{symbol} Markets</h3>
 
                 <SymbolMarkets symbol={symbol} />
