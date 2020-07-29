@@ -4,27 +4,25 @@ export const calculateWeightes = (tickers: ITicker[]): number => {
   const prices: number[] = tickers.filter(t => t).map((ticker: ITicker) => parseFloat(ticker.lastPrice));
   const volumes: number[] = tickers.filter(t => t).map((ticker: ITicker) => parseFloat(ticker.baseVolume));
 
-  const volumesAsWeights = getWeightFromNumbers(volumes);
+  const volumesAsWeights = getVolumeWeight(volumes);
 
-  return weightedMean(prices, volumesAsWeights);
+  return avgLastPrice(prices, volumesAsWeights);
 };
 
-export const getWeightFromNumbers = (arrValues: number[]): number[] => {
-  if (arrValues.length === 0) return [];
+export const getVolumeWeight = (volumes: number[]): number[] => {
+  if (volumes.length === 0) return [];
 
-  const total = arrValues.reduce((a, b) => a + b);
+  const total = volumes.reduce((total, value) => total + value);
 
-  return arrValues.map((value: number) => value/total);
+  return volumes.map((value: number) => value / total);
 };
 
-export const weightedMean = (arrValues: number[], arrWeights: number[]): number => {
-  const result = arrValues
-    .map((value, i) => {
-      const weight = arrWeights[i]
-      const sum = value * weight
-      return [sum, weight]
-    })
-    .reduce((p, c) => [p[0] + c[0], p[1] + c[1]], [0, 0])
+export const avgLastPrice = (prices: number[], weights: number[]): number => {
+  const result = prices.map((value, i) => {
+    const weight = weights[i]
+    const acc = value * weight
+    return [acc, weight]
+  }).reduce((total, value) => [total[0] + value[0], total[1] + value[1]], [0, 0])
 
   return result[0] / result[1]
 };

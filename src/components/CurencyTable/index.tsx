@@ -11,6 +11,7 @@ import { calculateWeightes } from '../../calcs/index';
 import { IAsset } from '../../Models/Asset';
 import { ITicker } from '../../Models/Ticker';
 import { GET_ASSETS } from '../../api/GET_ASSETS';
+import './style.scss';
 
 export default (props: { searchQuery?: String }): React.ReactElement => {
     const [limit, setLimit] = useState<number>(25);
@@ -27,13 +28,13 @@ export default (props: { searchQuery?: String }): React.ReactElement => {
 
     if (loading) return <Box textAlign="center"><CircularProgress /></Box>;
 
-    if (error) return <p>Something went wrong. This was the response: {error.message} </p>;
+    if (error) return <p>Error: {error.message} </p>;
 
     return (
 
         <Box marginTop={3}>
-            <table style={{ borderSpacing: 0, border: `1px solid rgb(226, 232, 240)`, margin: '0 auto', width: '900px', boxShadow: '0px 3px 16px -7px rgba(51, 51, 51, 0.3)' }}>
-                <thead style={{ backgroundColor: 'rgb(226, 232, 240)', color: 'black' }}>
+            <table className={"CurrencyTable"}>
+                <thead>
                     <tr>
                         <th>Name</th>
                         <th>Pair</th>
@@ -44,70 +45,48 @@ export default (props: { searchQuery?: String }): React.ReactElement => {
                 </thead>
 
                 <tbody>
-                    {data?.assets.map((asset: IAsset) =>
-                        <ValueRow
-                            key={asset.assetName + asset.assetSymbol}
-                            {...asset}
-                        />)
-                    }
-                </tbody>
+                    {
+                        data?.assets.map((asset: IAsset) => {
+                            const tickers: ITicker[] | undefined = asset.markets?.map((market): ITicker => market.ticker).filter(Boolean);
+                            const averageLastPrice: number = calculateWeightes(tickers || []);
+                            return (
+                                <tr>
+                                    <td><Link style={{ margin: '10px', textDecoration: 'unset', color: 'unset' }} to={`/currency/${asset.assetSymbol}`}>{asset.assetName}</Link></td>
+                                    <td>{asset.assetSymbol}/USD</td>
+                                    <td>
+                                        <Avatar alt={asset.assetName} src={`https://cryptoicons.org/api/icon/${asset.assetSymbol.toLowerCase()}/30`} />
+                                    </td>
+                                    <td>
+                                        {Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(asset.marketCap)}
+                                    </td>
+                                    <td>
+                                        {
+                                            tickers && tickers.length > 0 ? Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(averageLastPrice) : '-'
+                                        }
+                                    </td>
+                                </tr>
+                            );
 
-                <tfoot>
+                        })
+                    }
                     <tr>
                         <td colSpan={5}>
-                            <LimitSelector limit={limit} setLimit={setLimit} />
+                            <Paging limit={limit} setLimit={setLimit} />
                         </td>
                     </tr>
-                </tfoot>
+                </tbody>
             </table>
         </Box>
     );
 };
 
-export const ValueRow: React.FC<IAsset> = ({ assetName, assetSymbol, marketCap, markets }) => {
-    const tickers: ITicker[] | undefined = markets?.map((market): ITicker => market.ticker).filter(Boolean);
-    const averageLastPrice: number = calculateWeightes(tickers || []);
-
-    return (
-        <tr>
-            <td><Link style={{ margin: '10px' }} to={`/currency/${assetSymbol}`}>{assetName}</Link></td>
-            <td>{assetSymbol}/USD</td>
-            <td>
-                <Avatar alt={assetName} src={`https://cryptoicons.org/api/icon/${assetSymbol.toLowerCase()}/30`} />
-            </td>
-            <td>
-                {Intl.NumberFormat(
-                    'en-US',
-                    {
-                        style: 'currency',
-                        currency: 'USD'
-                    }).format(marketCap)
-                }
-            </td>
-            <td>
-                {
-                    tickers && tickers.length > 0
-                        ? Intl.NumberFormat(
-                            'en-US',
-                            {
-                                style: 'currency',
-                                currency: 'USD'
-                            }).format(averageLastPrice)
-                        : '-'
-                }
-            </td>
-        </tr>
-    );
-};
-
-export const LimitSelector: React.FC<{ limit: number, setLimit: any }> = ({ limit, setLimit }) => {
-    const LimitSelectorTextItem: React.FC<{ text: string, active?: boolean, limit?: number }> = ({ text, active, limit }) => (
+export const Paging: React.FC<{ limit: number, setLimit: any }> = ({ limit, setLimit }) => {
+    const PagingItem: React.FC<{ text: string, active?: boolean, limit?: number }> = ({ text, active, limit }) => (
         <Box
             fontSize="lg"
             style={{ cursor: 'pointer' }}
             paddingLeft="1em"
-            onClick={() => limit && setLimit(limit)}
-        >
+            onClick={() => limit && setLimit(limit)}  >
             {text}
         </Box>
     );
@@ -117,16 +96,16 @@ export const LimitSelector: React.FC<{ limit: number, setLimit: any }> = ({ limi
             <Grid item xl={12}>
                 <Grid container justify="flex-end" spacing={4}>
                     <Grid item>
-                        <LimitSelectorTextItem text="View" />
+                        <PagingItem text="View" />
                     </Grid>
                     <Grid item>
-                        <LimitSelectorTextItem text="25" limit={25} active={limit === 25} />
+                        <PagingItem text="25" limit={25} active={limit === 25} />
                     </Grid>
                     <Grid item>
-                        <LimitSelectorTextItem text="50" limit={50} active={limit === 50} />
+                        <PagingItem text="50" limit={50} active={limit === 50} />
                     </Grid>
                     <Grid item>
-                        <LimitSelectorTextItem text="all" limit={99999} active={limit === 99999} />
+                        <PagingItem text="all" limit={99999} active={limit === 99999} />
                     </Grid>
                 </Grid>
             </Grid>

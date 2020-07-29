@@ -9,7 +9,7 @@ export default (props: any): React.ReactElement => {
     return (
         <React.Fragment>
             <Helmet>
-                <title>Home • CoinMarketCap</title>
+                <title>Home</title>
             </Helmet>
 
             <Box

@@ -1,24 +1,17 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import {
-    Box,
     Input,
     InputAdornment,
-    TextField,
-    Paper,
     Typography,
-    Toolbar,
     Grid
 } from "@material-ui/core";
 import CurencyTable from '../CurencyTable/index';
-// import searchIcon from '../../../ui-examples/searsch.svg'
-
 
 export default (): React.ReactElement => {
     const [searchQuery, setSearchQuery] = useState<string>("");
     let delayedSet: NodeJS.Timeout | null = null;
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        debugger
         const value = e.currentTarget.value;
 
         if (delayedSet) clearTimeout(delayedSet);
@@ -49,7 +42,6 @@ export default (): React.ReactElement => {
                     </Grid>
                     <Grid key={1} item>
                         <Input
-                            fullWidth={true}
                             style={{ width: '360px', border: '1px solid' }}
                             startAdornment={
                                 <InputAdornment position="start">

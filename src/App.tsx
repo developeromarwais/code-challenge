@@ -10,7 +10,6 @@ import apollo from './config/Apollo';
 
 
 function App() {
-  // const [darkMode, setDarkMode] = useState(false)
   const [theme, toggleDarkMode] = useDarkMode()
   const darkTheme = createMuiTheme({
     palette: {
